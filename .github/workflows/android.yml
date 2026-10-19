@@ -21,10 +21,17 @@ jobs:
       uses: gradle/gradle-build-action@v2
 
     - name: Build Debug APK
-      run: gradle assembleDebug
+      run: |
+        if [ -f "app/build.gradle" ]; then
+          gradle assembleDebug --build-file app/build.gradle
+        elif [ -f "app/app/build.gradle" ]; then
+          gradle assembleDebug --build-file app/app/build.gradle
+        else
+          gradle assembleDebug
+        fi
 
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
         name: PaymentSpeaker-APK
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: "**/build/outputs/apk/debug/*.apk"
